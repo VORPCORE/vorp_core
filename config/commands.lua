@@ -154,7 +154,7 @@ Commands = {
         },
         userCheck = true,
         groupAllowed = { "admin" },
-        aceAllowed = nil,
+        aceAllowed = "",
         callFunction = function(...)
             SetMultiJobMaxAllowed(...)
         end
@@ -173,7 +173,7 @@ Commands = {
         },
         userCheck = true,
         groupAllowed = { "admin" },
-        aceAllowed = nil,
+        aceAllowed = "",
         callFunction = function(...)
             AddMultiJob(...)
         end
@@ -190,7 +190,7 @@ Commands = {
         },
         userCheck = true,
         groupAllowed = { "admin" },
-        aceAllowed = nil,
+        aceAllowed = "",
         callFunction = function(...)
             RemoveMultiJob(...)
         end
