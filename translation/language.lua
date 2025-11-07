@@ -43,6 +43,20 @@ Translation = {
                 icon = "five_finger_burnout",
                 color = "COLOR_RED",
             },
+            MultiJob = {
+                MaxMJob            = "You have set the maximum number of jobs allowed to %s",
+                MaxMJobSet         = "You have been set the maximum number of jobs allowed to %s",
+                ReachedMaxMJob     = "User have reached the maximum number of jobs allowed",
+                YouAddedMJob       = "You have added %s to %s",
+                YouGiveMJob        = "You have been given %s",
+                InvalidMJob        = "User dont have this job to be removed",
+                YouRemovedMJob     = "You have removed %s from %s",
+                YouLostMJob        = "You have lost %s",
+                DontHaveMJob       = "You dont have any mutijob",
+                DontHaveThisMJob   = "You dont have this job",
+                CoolDownMJob       = "You are on cool down, please wait ",
+                YouSwitchedMjob    = "You have switched to ",
+            },
         },
         Commands        = {
             webHookMessage = "**Steam name: **`%s`**\nIdentifier**`%s` \n**Discord:** <@%s>**\nIP: **`%s`", -- only translate
