@@ -418,8 +418,8 @@ function SetMultiJobMaxAllowed(data)
     user.setMaxJobsAllowed(maxJobs)
 
     sendDiscordLogs(data.config.webhook, data, _source, maxJobs, "")
-    CoreFunctions.NotifyRightTip(_source, string.format("you have set the maximum number of jobs allowed to %s", maxJobs), 4000)
-    CoreFunctions.NotifyRightTip(target, string.format("you have been set the maximum number of jobs allowed to %s", maxJobs), 4000)
+    CoreFunctions.NotifyRightTip(_source, string.format(Translation[Lang].Notify.MultiJob.MaxMJob, maxJobs), 4000)
+    CoreFunctions.NotifyRightTip(target, string.format(Translation[Lang].Notify.MultiJob.MaxMJobSet, maxJobs), 4000)
 end
 
 -- new funtion to add multijobs to users
@@ -435,12 +435,12 @@ function AddMultiJob(data)
     local maxJobs <const> = user.maxJobsAllowed
     local character <const> = user.getUsedCharacter
     local count <const> = character.getMultiJobsCount()
-    if count >= maxJobs then return CoreFunctions.NotifyRightTip(_source, "user have reached the maximum number of jobs allowed", 4000) end
+    if count >= maxJobs then return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.ReachedMaxMJob, 4000) end
 
     character.setMultiJob(job, grade, label)
     sendDiscordLogs(data.config.webhook, data, _source, job, grade)
-    CoreFunctions.NotifyRightTip(_source, string.format("you have added %s to %s", job, target), 4000)
-    CoreFunctions.NotifyRightTip(target, string.format("you have been given %s", job), 4000)
+    CoreFunctions.NotifyRightTip(_source, string.format(Translation[Lang].Notify.MultiJob.YouAddedMJob, job, target), 4000)
+    CoreFunctions.NotifyRightTip(target, string.format(Translation[Lang].Notify.MultiJob.YouGiveMJob, job), 4000)
 end
 
 -- remove multijob from user
@@ -453,11 +453,11 @@ function RemoveMultiJob(data)
 
     local character <const> = user.getUsedCharacter
     local result <const> = character.removeMultiJob(job)
-    if not result then return CoreFunctions.NotifyRightTip(_source, "user dont have this job to be removed", 4000) end
+    if not result then return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.InvalidMJob, 4000) end
 
     sendDiscordLogs(data.config.webhook, data, data.source, job, "")
-    CoreFunctions.NotifyRightTip(data.source, string.format("you have removed %s from %s", job, target), 4000)
-    CoreFunctions.NotifyRightTip(target, string.format("you have lost %s", job), 4000)
+    CoreFunctions.NotifyRightTip(data.source, string.format(Translation[Lang].Notify.MultiJob.YouRemovedMJob, job, target), 4000)
+    CoreFunctions.NotifyRightTip(target, string.format(Translation[Lang].Notify.MultiJob.YouLostMJob, job), 4000)
 end
 
 local usersJobCoolDown <const> = {}
@@ -470,18 +470,18 @@ function SwitchMultiJob(data)
 
     local value <const> = Character.multiJobs
     if not value or not next(value) then
-        return CoreFunctions.NotifyRightTip(_source, "youdont have any mutijob", 4000)
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.DontHaveMJob, 4000)
     end
 
     if not value[job] then
-        return CoreFunctions.NotifyRightTip(_source, "you dont have this job", 4000)
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.DontHaveThisMJob, 4000)
     end
 
     if usersJobCoolDown[_source] and usersJobCoolDown[_source] > os.time() then
         local timeDiff <const> = usersJobCoolDown[_source] - os.time()
         local minutes <const> = math.floor(timeDiff / 60)
         local seconds <const> = timeDiff % 60
-        return CoreFunctions.NotifyRightTip(_source, "you are on cool down, please wait " .. minutes .. " minutes and " .. seconds .. " seconds", 4000)
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.CoolDownMJob .. minutes .. " minutes and " .. seconds .. " seconds", 4000)
     end
     usersJobCoolDown[_source] = os.time() + Config.SwitchJobCoolDown * 60
 
@@ -489,7 +489,7 @@ function SwitchMultiJob(data)
     Character.setJob(job)
     Character.setJobGrade(value[job].grade)
     Character.setJobLabel(value[job].label)
-    CoreFunctions.NotifyRightTip(_source, "you have switched to " .. value[job].label .. " Job", 4000)
+    CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.YouSwitchedMjob .. value[job].label .. " Job", 4000)
     sendDiscordLogs(data.config.webhook, data, _source, value[job].label, value[job].grade)
 end
 
