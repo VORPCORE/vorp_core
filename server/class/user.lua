@@ -227,7 +227,7 @@ function User(source, identifier, group, playerwarnings, license, char, max_jobs
                             steamname = self.steamname,
                             slots = character.slots or 200,
                             skills = character.skills and json.decode(character.skills) or {},
-                            multijobs = character.multijobs and json.decode(character.multijobs) or {},
+                            multiJobs = character.multijobs and json.decode(character.multijobs) or {},
                         }
                         local newCharacter = Character(data)
                         self._usercharacters[newCharacter.CharIdentifier()] = newCharacter
