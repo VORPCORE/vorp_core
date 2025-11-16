@@ -260,11 +260,11 @@ RegisterNetEvent("vorp:GetValues", function()
     local _source = source
     local healthData = { hOuter = 10, hInner = 10, sOuter = 10, sInner = 10 }
     local identifier = GetPlayerIdentifierByType(_source, 'steam')
-    local user = _users[identifier] or nil
+    local user = _users[identifier]
 
     -- Only if the player exists in online table...
     if user and user.GetUsedCharacter then
-        local used_char = user.GetUsedCharacter() or nil
+        local used_char = user.GetUsedCharacter()
 
         -- Only there is an character...
         if used_char then

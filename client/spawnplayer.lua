@@ -141,12 +141,30 @@ AddEventHandler('vorp:initCharacter', function(coords, heading, isdead)
             repeat Wait(0) until HealthData
             if HealthData then
                 local player = PlayerPedId()
-                Citizen.InvokeNative(0xC6258F41D86676E0, player, 0, HealthData.hInner or 600)
-                SetEntityHealth(player, (HealthData.hOuter and HealthData.hOuter > 0 and HealthData.hOuter or 600) + (HealthData.hInner and HealthData.hInner > 0 and HealthData.hInner or 600), 0)
-                Citizen.InvokeNative(0xC6258F41D86676E0, player, 1, HealthData.sInner or 600)
-                Citizen.InvokeNative(0x675680D089BFA21F, player, (HealthData.sOuter or (1065353215 * 100)) / 1065353215 * 100)
+                if HealthData.hInner and HealthData.hInner >= 100 then
+                    HealthData.hInner = 100
+                else
+                    HealthData.hInner = 10
+                end
+                if HealthData.sInner and HealthData.sInner >= 100 then
+                    HealthData.sInner = 100
+                else
+                    HealthData.sInner = 10
+                end
+
+                local newHealth = 600
+                if HealthData.hInner and HealthData.hInner >= 100 then
+                    newHealth = HealthData.hOuter or 10
+                end
+
+                SetAttributeCoreValue(player, 0, HealthData.hInner) -- inner health
+                SetEntityHealth(player, newHealth, 0)
+                SetAttributeCoreValue(player, 1, HealthData.sInner)
+                local maxStamina = GetPedMaxStamina(player)
+                local amount = maxStamina - HealthData.sInner
+                ChangePedStamina(player, amount + 0.0)
+                HealthData = {}
             end
-            HealthData = {}
         else
             CoreAction.Admin.HealPlayer()
         end
@@ -188,9 +206,8 @@ RegisterNetEvent("vorp:SelectedCharacter", function()
     CreateThread(CoreAction.Player.MapCheck)
 end)
 
-RegisterNetEvent("vorp:GetHealthFromCore")
-AddEventHandler("vorp:GetHealthFromCore", function(healthData)
-    HealthData = healthData
+RegisterNetEvent("vorp:GetHealthFromCore", function(healthData)
+    HealthData = healthData or {}
 end)
 
 -- THREADS
