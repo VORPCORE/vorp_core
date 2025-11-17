@@ -25,13 +25,14 @@ function CoreAction.Utils.setPVP()
 end
 
 function CoreAction.Player.TeleportToCoords(coords, heading)
-    CreateThread(function()
-        SetEntityCoordsAndHeading(PlayerPedId(), coords.x, coords.y, coords.z, heading or 0.0, false, false, false)
-        RequestCollisionAtCoord(coords.x, coords.y, coords.z)
-        repeat Wait(0) until HasCollisionLoadedAroundEntity(PlayerPedId()) == 1
-        repeat Wait(0) until not IsEntityWaitingForWorldCollision(PlayerPedId())
-        repeat Wait(0) until HasCollisionLoadedAroundPosition(coords.x, coords.y, coords.z)
-    end)
+    SetEntityCoordsAndHeading(PlayerPedId(), coords.x, coords.y, coords.z, heading or 0.0, false, false, false)
+    RequestCollisionAtCoord(coords.x, coords.y, coords.z)
+    -- repeat Wait(0) until HasCollisionLoadedAroundEntity(PlayerPedId()) == 1
+    --  repeat Wait(0) until not IsEntityWaitingForWorldCollision(PlayerPedId())
+    -- repeat Wait(0) until HasCollisionLoadedAroundPosition(coords.x, coords.y, coords.z)
+    LoadSceneStart(coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 30.0, 0)
+    repeat Wait(0) until IsLoadSceneLoaded() ~= 0
+    LoadSceneStop()
 end
 
 function CoreAction.Player.MapCheck()
@@ -170,7 +171,6 @@ AddEventHandler('vorp:initCharacter', function(coords, heading, isdead)
         end
     end
 
-    Wait(1000)
     DoScreenFadeIn(3000)
     repeat Wait(500) until IsScreenFadedIn()
     TriggerEvent("vorp_core:Client:OnPlayerSpawned")
