@@ -14,16 +14,12 @@ local keepdown
 local function CheckLabel()
     if not carried then
         if not Done then
-            local label = VarString(10, 'LITERAL_STRING',
-                T.RespawnIn .. TimeToRespawn .. T.SecondsMove .. T.message)
-            return label
+            return VarString(10, 'LITERAL_STRING', T.RespawnIn .. TimeToRespawn .. T.SecondsMove .. T.message)
         else
-            local label = VarString(10, 'LITERAL_STRING', T.message2)
-            return label
+            return VarString(10, 'LITERAL_STRING', T.message2)
         end
     else
-        local label = VarString(10, 'LITERAL_STRING', T.YouAreCarried)
-        return label
+        return VarString(10, 'LITERAL_STRING', T.YouAreCarried)
     end
 end
 
@@ -47,15 +43,9 @@ local function RespawnTimer()
 end
 
 local function ProcessNewPosition()
-    local mouseX = 0.0
-    local mouseY = 0.0
-    if (IsInputDisabled(0)) then -- THIS DOESNT EXIST ?
-        mouseX = GetDisabledControlNormal(1, 0x4D8FB4C1) * 1.5
-        mouseY = GetDisabledControlNormal(1, 0xFDA83190) * 1.5
-    else
-        mouseX = GetDisabledControlNormal(1, 0x4D8FB4C1) * 0.5
-        mouseY = GetDisabledControlNormal(1, 0xFDA83190) * 0.5
-    end
+    local mouseX = GetDisabledControlNormal(1, 0x4D8FB4C1) * 0.5
+    local mouseY = GetDisabledControlNormal(1, 0xFDA83190) * 0.5
+
     angleZ = angleZ - mouseX
     angleY = angleY + mouseY
 
@@ -67,11 +57,11 @@ local function ProcessNewPosition()
         z = pCoords.z + ((Sin(angleY))) * (3.0 + 0.5)
     }
     local rayHandle = StartShapeTestLosProbe(pCoords.x, pCoords.y, pCoords.z + 0.5, behindCam.x, behindCam.y, behindCam.z, -1, PlayerPedId(), 0)
-    local hitBool, hitCoords = GetShapeTestResult(rayHandle)
+    local _, hitBool, hitCoords = GetShapeTestResult(rayHandle)
 
     local maxRadius = 3.0
-    if (hitBool and Vdist(pCoords.x, pCoords.y, pCoords.z + 0.5, hitCoords, 0, 0) < 3.0 + 0.5) then
-        maxRadius = Vdist(pCoords.x, pCoords.y, pCoords.z + 0.5, hitCoords, 0, 0)
+    if (hitBool and Vdist(pCoords.x, pCoords.y, pCoords.z + 0.5, hitCoords.x, hitCoords.y, hitCoords.z) < 3.0 + 0.5) then
+        maxRadius = Vdist(pCoords.x, pCoords.y, pCoords.z + 0.5, hitCoords.x, hitCoords.y, hitCoords.z)
     end
 
     local offset = {
@@ -135,9 +125,6 @@ function CoreAction.Player.ResurrectPlayer(currentHospital, currentHospitalName,
     Wait(200)
     EndDeathCam()
     TriggerServerEvent("vorp:ImDead", false)
-    -- this cant be here cause its triggering on revive and on respawn functions also these are client sided and people can exploit them, this has been move to server side
-    --TriggerServerEvent("vorp_core:Server:OnPlayerRevive")
-    -- TriggerEvent("vorp_core:Client:OnPlayerRevive")
     setDead = false
     DisplayHud(true)
     DisplayRadar(true)
@@ -180,7 +167,7 @@ function CoreAction.Player.RespawnPlayer(allowCleanItems)
     local closestLocation = ""
     local coords = nil
     local pedCoords = GetEntityCoords(PlayerPedId())
-    for key, location in pairs(Config.Hospitals) do
+    for _, location in pairs(Config.Hospitals) do
         local locationCoords = vector3(location.pos.x, location.pos.y, location.pos.z)
         local currentDistance = #(pedCoords - locationCoords)
         if currentDistance < closestDistance then
@@ -197,7 +184,7 @@ end
 
 -- CREATE PROMPT
 CreateThread(function()
-    repeat Wait(1000) until LocalPlayer.state.IsInSession
+    repeat Wait(5000) until LocalPlayer.state.IsInSession
     local str = T.prompt
     local keyPress = Config.RespawnKey
     prompt = UiPromptRegisterBegin()
@@ -224,7 +211,8 @@ end)
 
 --DEATH HANDLER
 CreateThread(function()
-    repeat Wait(1000) until LocalPlayer.state.IsInSession
+    repeat Wait(5000) until LocalPlayer.state.IsInSession
+
     while Config.UseDeathHandler do
         local sleep = 1000
 
@@ -250,6 +238,7 @@ CreateThread(function()
                 CreateThread(RespawnTimer)
                 CreateThread(StartDeathCam)
             end
+
             if not PressKey and setDead then
                 sleep = 0
                 if not IsEntityAttachedToAnyPed(PlayerPedId()) then
@@ -259,7 +248,7 @@ CreateThread(function()
                         if Config.CanRespawn() then
                             DoScreenFadeOut(3000)
                             Wait(3000)
-                            TriggerServerEvent("vorp_core:PlayerRespawnInternal", true) -- needs to go to server so that the respawn event listeners are triggered
+                            TriggerServerEvent("vorp_core:PlayerRespawnInternal", true)
                             Wait(1000)
                             PressKey      = true
                             carried       = false
