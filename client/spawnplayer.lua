@@ -27,11 +27,9 @@ end
 function CoreAction.Player.TeleportToCoords(coords, heading)
     SetEntityCoordsAndHeading(PlayerPedId(), coords.x, coords.y, coords.z, heading or 0.0, false, false, false)
     RequestCollisionAtCoord(coords.x, coords.y, coords.z)
-    -- repeat Wait(0) until HasCollisionLoadedAroundEntity(PlayerPedId()) == 1
-    --  repeat Wait(0) until not IsEntityWaitingForWorldCollision(PlayerPedId())
-    -- repeat Wait(0) until HasCollisionLoadedAroundPosition(coords.x, coords.y, coords.z)
-    LoadSceneStart(coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 30.0, 0)
-    repeat Wait(0) until IsLoadSceneLoaded() ~= 0
+    LoadSceneStart(coords.x, coords.y, coords.z, 0.0, 0.0, 0.0, 40.0, 0)
+    local timer = GetGameTimer()
+    repeat Wait(0) until IsLoadSceneLoaded() ~= 0 or GetGameTimer() - timer > 6000
     LoadSceneStop()
 end
 
