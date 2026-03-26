@@ -1,5 +1,6 @@
 local vorpShowUI = true
 local ShowUI = true
+local MenuData = exports.vorp_menu:GetMenuData()
 
 function CoreAction.Utils.ToggleVorpUI()
     vorpShowUI = not vorpShowUI
@@ -71,4 +72,32 @@ end)
 RegisterNUICallback('close', function(args, cb)
     vorpShowUI = false
     cb('ok')
+end)
+
+RegisterNetEvent('vorp:OpenSkillMenu', function(data)
+    MenuData.CloseAll(true, true, true)
+    local elements <const> = {}
+    for skillName, skillData in pairs(data) do
+        table.insert(elements, {
+            label = skillData.Label .. " " .. skillData.Level,
+            value = skillName,
+            description = skillData.Label .. "<br>" .. " current Exp: " .. skillData.Exp .. "current level: (" .. skillData.Level .. " / " .. skillData.MaxLevel .. ")",
+        })
+    end
+
+    MenuData.Open('default', GetCurrentResourceName(), 'skill_menu', {
+        title = "Skills Menu",
+        subtext = "skill sub menu",
+        elements = elements,
+        align = "top-left",
+        soundOpen = true,
+        hideRadar = true,
+        enableCursor = true,
+        divider = true,
+        fixedHeight = true,
+    }, function(_, _)
+
+    end, function(_, menu)
+        menu.close(true, true, true)
+    end)
 end)

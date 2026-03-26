@@ -53,22 +53,6 @@ Commands = {
             SetExp(...)
         end
     },
-    myExp = {
-        webhook = "",
-        custom = T.myExp.custom,
-        title = T.myExp.title,
-        commandName = "myExp",
-        label = T.myExp.label,
-        suggestion = {
-            { name = T.myExp.name, help = T.myExp.help },
-        },
-        userCheck = false,
-        groupAllowed = {},
-        aceAllowed = nil,
-        callFunction = function(...)
-            MyExp(...)
-        end
-    },
     addgroup = {
         webhook = "",
         custom = T.addGroup.custom,
@@ -497,6 +481,21 @@ Commands = {
             MyJob(...)
         end
     },
+    openSkillMenu = {
+        webhook = "",
+        custom = T.openSkillMenu.custom, -- for webhook
+        title = T.openSkillMenu.title,
+        commandName = "skillMenu",
+        label = T.openSkillMenu.label,
+        suggestion = {},
+        userCheck = false,
+        groupAllowed = {},
+        aceAllowed = nil,
+        callFunction = function(...)
+            OpenSkillMenu(...)
+        end
+    },
+
 
     -- create your commands here just copy from above , see first line on how to do it
 

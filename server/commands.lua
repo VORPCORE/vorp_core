@@ -392,21 +392,6 @@ function SetExp(data)
     CoreFunctions.NotifyRightTip(target, string.format(Translation[Lang].Notify.GivenExp, exp, skillName), 4000)
 end
 
---my exp
-function MyExp(data)
-    local _source = data.source
-    local User = CoreFunctions.getUser(_source).getUsedCharacter
-    local skills = User.skills
-    if not skills[data.args[1]] then
-        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.NotFound, 4000)
-    end
-    local exp = skills[data.args[1]].Exp
-    local lvl = skills[data.args[1]].Level
-    local label = skills[data.args[1]].Label
-    local text = Translation[Lang].Notify.Level
-    CoreFunctions.NotifyRightTip(_source, text:format(label, lvl, exp, data.args[1]), 4000)
-end
-
 -- command to set multi job max allowed
 function SetMultiJobMaxAllowed(data)
     local _source <const> = data.source
@@ -491,6 +476,18 @@ function SwitchMultiJob(data)
     Character.setJobLabel(value[job].label)
     CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.YouSwitchedMjob .. value[job].label .. " Job", 4000)
     sendDiscordLogs(data.config.webhook, data, _source, value[job].label, value[job].grade)
+end
+
+function OpenSkillMenu(data)
+    local _source <const> = data.source
+    local user <const> = CoreFunctions.getUser(_source)
+    if not user then return end
+
+    local character <const> = user.getUsedCharacter
+    local skills <const> = character.skills
+    if not skills then return end
+
+    TriggerClientEvent('vorp:OpenSkillMenu', _source, skills)
 end
 
 AddEventHandler("playerDropped", function(source)
