@@ -79,9 +79,9 @@ RegisterNetEvent('vorp:OpenSkillMenu', function(data)
     local elements <const> = {}
     for skillName, skillData in pairs(data) do
         table.insert(elements, {
-            label = skillData.Label .. " " .. skillData.Level,
+            label = skillName .. " " .. skillData.Level,
             value = skillName,
-            description = skillData.Label .. "<br>" .. " current Exp: " .. skillData.Exp .. "current level: (" .. skillData.Level .. " / " .. skillData.MaxLevel .. ")",
+            desc = skillData.Label .. "<br>" .. " current Exp: " .. skillData.Exp .. "current level: (" .. skillData.Level .. " / " .. skillData.MaxLevel .. ")",
         })
     end
 
