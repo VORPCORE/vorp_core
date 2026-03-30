@@ -119,118 +119,13 @@ CreateThread(function()
     end
 end)
 
--- logic taken from:
--- https://github.com/femga/rdr3_discoveries/commit/62a4540839361bbdcfea6cca582f86894e7fc6ea
-
-local EXCLUDED_INTERIORS <const> = {
-    [`agu_fus_cave_int`] = true,
-    [`bea_01_int`] = true,
-    [`elh_seacaves_int`] = true,
-    [`j_16_tunnel_int`] = true,
-    [`l_14_cave_int`] = true,
-    [`m05_bearcave_main`] = true,
-    [`mil_mine_cave_int`] = true,
-    [0x26FB0E67] = true,
-    [0x615D3CCA] = true,
-}
-
-local INCLUDED_TOWN_ZONES <const> = {
-    [`aguasdulcesfarm`] = true,
-    [`aguasdulcesruins`] = true,
-    [`aguasdulcesvilla`] = true,
-    [`annesburg`] = true,
-    [`armadillo`] = true,
-    [`beechershope`] = true,
-    [`blackwater`] = true,
-    [`braithwaite`] = true,
-    [`butcher`] = true,
-    [`caliga`] = true,
-    [`cornwall`] = true,
-    [`emerald`] = true,
-    [`lagras`] = true,
-    [`manicato`] = true,
-    [`manzanita`] = true,
-    [`rhodes`] = true,
-    [`siska`] = true,
-    [`stdenis`] = true,
-    [`strawberry`] = true,
-    [`tumbleweed`] = true,
-    [`valentine`] = true,
-    [`vanhorn`] = true,
-    [`wallace`] = true,
-    [`wapiti`] = true,
-}
-
-local eZONE_TYPE <const> = {
-    STATE = 0,
-    TOWN = 1,
-    LAKE = 2,
-    RIVER = 3,
-    OIL_SPILL = 4,
-    SWAMP = 5,
-    OCEAN = 6,
-    CREEK = 7,
-    POND = 8,
-    GLACIER = 9,
-    DISTRICT = 10,
-    TEXT_PRINTED = 11,
-    TEXT_WRITTEN = 12
-}
-
-local lastState = nil
 
 local function isIndoors(ped)
-    local interior = GetInteriorFromEntity(ped)
-    if not IsValidInterior(interior) then return false end
-    local _, hash = GetInteriorLocationAndNamehash(interior)
-    if EXCLUDED_INTERIORS[hash] then return false end
-    return true
-end
-
--- Note: This may be too big in certain cases
--- Game uses volumes for this, this is a simpler but less accurate approach
-local function isInTown(ped)
-    local pos = GetEntityCoords(ped)
-    local zone = GetMapZoneAtCoords(pos.x, pos.y, pos.z, eZONE_TYPE.TOWN)
-    return INCLUDED_TOWN_ZONES[zone]
-end
-
-local function isRiding(ped)
-    return IsPedOnMount(ped) or IsPedInAnyVehicle(ped, false) or IsPedInAnyTrain(ped)
-end
-
-local function updateSpeedState(speed, riding, current)
-    local margin = (current == nil) and 0.0 or (riding and 2.5 or 1.0)
-    local threshold = riding and 7.0 or 3.0
-
-    if speed < (threshold - margin) then return false end
-    if speed >= (threshold + margin) then return true end
-    return current
-end
-
-local function updateRadar()
-    local ped = PlayerPedId()
-    local isPlayerDead = IsPlayerDead(PlayerId())
-    if isPlayerDead then return end
-
-    local speed = GetEntitySpeed(ped)
-    local riding = isRiding(ped)
-
-    -- Speed is relative to the current state
-    lastState = updateSpeedState(speed, riding, lastState)
-
-    if isIndoors(ped) then
-        SetRadarConfigType(`RADAR_CONFIG_INDOOR`, 0)
-        return
+    local interior <const> = GetInteriorFromEntity(ped)
+    if IsValidInterior(interior) then
+        return true
     end
-
-    -- Construct the radar config key dynamically
-    local strRide = riding and "RIDE" or "FOOT"
-    local strSpeed = lastState and "FAST" or "SLOW"
-    local strLoc = isInTown(ped) and "TOWN" or "WILDERNESS"
-    local config = string.format("RADAR_CONFIG_%s_%s_%s", strRide, strSpeed, strLoc)
-
-    SetRadarConfigType(joaat(config), 0)
+    return false
 end
 
 CreateThread(function()
@@ -238,7 +133,8 @@ CreateThread(function()
 
     local lastPlayerPed = PlayerPedId()
     while true do
-        updateRadar()
+        local configHash <const> = isIndoors(lastPlayerPed) and `RADAR_CONFIG_INDOOR` or `RADAR_CONFIG_CODE_CONTROL`
+        SetRadarConfigType(configHash, 0)
 
         -- for horse ducking feature like RDO
         if lastPlayerPed ~= PlayerPedId() then
