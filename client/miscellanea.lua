@@ -240,6 +240,7 @@ CreateThread(function()
     while true do
         updateRadar()
 
+        -- for horse ducking feature like RDO
         if lastPlayerPed ~= PlayerPedId() then
             SetPedConfigFlag(lastPlayerPed, 560, true)
             lastPlayerPed = PlayerPedId()
