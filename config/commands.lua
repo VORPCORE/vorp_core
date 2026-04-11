@@ -109,23 +109,6 @@ Commands = {
             AddJob(...)
         end
     },
-    switchMultiJob = {
-        webhook = "",
-        custom = "\n**PlayerID:** `%d` \n**Job switched** `%s`\n**Grade:** `%d`",
-        title = "📋 `/switchMultiJob command`",
-        commandName = "switchMultiJob",
-        label = "VORPcore command to switch your job",
-        suggestion = {
-            { name = "Id",  help = "your ID" },
-            { name = "Job", help = "job name to switch to" },
-        },
-        userCheck = false,
-        groupAllowed = {},
-        aceAllowed = nil,
-        callFunction = function(...)
-            SwitchMultiJob(...)
-        end
-    },
     setMaxJobsAllowed = {
         webhook = "",
         custom = "\n**PlayerID:** `%d` \n**Max jobs allowed** `%d`",
@@ -481,18 +464,18 @@ Commands = {
             MyJob(...)
         end
     },
-    openSkillMenu = {
+    openPlayerMenu = {
         webhook = "",
-        custom = T.openSkillMenu.custom, -- for webhook
-        title = T.openSkillMenu.title,
-        commandName = "skillMenu",
-        label = T.openSkillMenu.label,
+        custom = T.openPlayerMenu.custom,
+        title = T.openPlayerMenu.title,
+        commandName = "playerMenu",
+        label = T.openPlayerMenu.label,
         suggestion = {},
         userCheck = false,
         groupAllowed = {},
         aceAllowed = nil,
         callFunction = function(...)
-            OpenSkillMenu(...)
+            OpenPlayerMenu(...)
         end
     },
 
