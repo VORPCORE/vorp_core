@@ -448,9 +448,7 @@ end
 local usersJobCoolDown <const> = {}
 local function getMultiJobCooldownRemaining(source)
     local cooldown <const> = usersJobCoolDown[source]
-    if not cooldown then
-        return 0
-    end
+    if not cooldown then return 0 end
 
     local remaining <const> = cooldown - os.time()
     if remaining <= 0 then
@@ -470,21 +468,11 @@ end
 local function buildPlayerMenuPayload(source)
     local user <const> = CoreFunctions.getUser(source)
     if not user then return end
-
     local character <const> = user.getUsedCharacter
-    if not character then return end
-
-    local jobs = {}
-    for jobName, jobData in pairs(character.multiJobs or {}) do
-        jobs[jobName] = {
-            grade = jobData.grade,
-            label = jobData.label
-        }
-    end
 
     return {
-        skills = character.skills or {},
-        jobs = jobs,
+        skills = character.skills,
+        jobs = character.multiJobs,
         activeJob = {
             name = character.job,
             grade = character.jobGrade,
@@ -494,74 +482,52 @@ local function buildPlayerMenuPayload(source)
     }
 end
 
-local function switchCharacterMultiJob(source, job, logData)
-    local user <const> = CoreFunctions.getUser(source)
-    if not user then return false end
-
-    local Character <const> = user.getUsedCharacter
-    if not Character then return false end
-
-    local value <const> = Character.multiJobs
-    if not value or not next(value) then
-        CoreFunctions.NotifyRightTip(source, Translation[Lang].Notify.MultiJob.DontHaveMJob, 4000)
-        return false
-    end
-
-    if not value[job] then
-        CoreFunctions.NotifyRightTip(source, Translation[Lang].Notify.MultiJob.DontHaveThisMJob, 4000)
-        return false
-    end
-
-    if Character.job == job then
-        CoreFunctions.NotifyRightTip(source, "You already have this job equipped", 4000)
-        return false
-    end
-
-    local cooldownRemaining <const> = getMultiJobCooldownRemaining(source)
-    if cooldownRemaining > 0 then
-        CoreFunctions.NotifyRightTip(source, Translation[Lang].Notify.MultiJob.CoolDownMJob .. formatMultiJobCooldown(cooldownRemaining), 4000)
-        return false
-    end
-
-    usersJobCoolDown[source] = os.time() + Config.SwitchJobCoolDown * 60
-
-    Character.setJob(job)
-    Character.setJobGrade(value[job].grade)
-    Character.setJobLabel(value[job].label)
-
-    CoreFunctions.NotifyRightTip(source, Translation[Lang].Notify.MultiJob.YouSwitchedMjob .. value[job].label .. " Job", 4000)
-
-    if logData then
-        sendDiscordLogs(logData.config.webhook, logData, source, value[job].label, value[job].grade)
-    end
-
-    return true
-end
-
-function SwitchMultiJob(data)
-    local _source <const> = data.source
-    local job <const> = data.args[2]
-    switchCharacterMultiJob(_source, job, data)
-end
-
-local function triggerPlayerMenu(source)
+function OpenPlayerMenu(data)
+    local source <const> = data.source
     local payload <const> = buildPlayerMenuPayload(source)
     if not payload then return end
 
     TriggerClientEvent('vorp:OpenPlayerMenu', source, payload)
 end
 
-function OpenPlayerMenu(data)
-    triggerPlayerMenu(data.source)
-end
-
 RegisterNetEvent("vorp:SwitchMultiJobMenu", function(job)
     local _source <const> = source
-    if type(job) ~= "string" or job == "" then
-        return
+    local user <const> = CoreFunctions.getUser(_source)
+    if not user then return end
+
+    local Character <const> = user.getUsedCharacter
+    local value <const> = Character.multiJobs
+
+    if not value or not next(value) then
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.DontHaveMJob, 4000)
     end
 
-    switchCharacterMultiJob(_source, job)
+    if not value[job] then
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.DontHaveThisMJob, 4000)
+    end
+
+    if Character.job == job then
+        return CoreFunctions.NotifyRightTip(_source, "You already have this job equipped", 4000)
+    end
+
+    local cooldownRemaining <const> = getMultiJobCooldownRemaining(_source)
+    if cooldownRemaining > 0 then
+        return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.CoolDownMJob .. formatMultiJobCooldown(cooldownRemaining), 4000)
+    end
+
+    usersJobCoolDown[_source] = os.time() + Config.SwitchJobCoolDown * 60
+
+    Character.setJob(job)
+    Character.setJobGrade(value[job].grade)
+    Character.setJobLabel(value[job].label)
+
+    CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.YouSwitchedMjob .. value[job].label .. " Job", 4000)
+
+    local logData <const> = Commands.openPlayerMenu
+    if logData then
+        local custom <const> = { config = logData }
+        sendDiscordLogs(logData.webhook, custom, _source, value[job].label, value[job].grade)
+    end
 end)
 
 AddEventHandler("playerDropped", function(source)
