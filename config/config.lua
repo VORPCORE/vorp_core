@@ -254,6 +254,49 @@ Config = {
             url = ''          -- Example for Rich Presence Button
         }
     },
+
     --=============================================
+    --           AMBIENT POPULATION              --
+    --=============================================
+    -- allows you to control population density of the world
+    Multipliers              = {
+        AnimalDensity         = {
+            enable = false, -- enable disable them
+            value = 0.0     -- default values can be adjusted in here 0.001 -> 1.0
+        },
+        HumanDensity          = {
+            enable = false,
+            value = 0.0
+        },
+        PedDensity            = {
+            enable = false,
+            value = 0.0
+        },
+        VehicleDensity        = {
+            enable = false,
+            value = 0.0
+        },
+        ScenarioAnimalDensity = {
+            enable = false,
+            value = 0.0
+        },
+        ScenarioHumanDensity  = {
+            enable = false,
+            value = 0.0
+        },
+        ScenarioPedDensity    = {
+            enable = false,
+            value = 0.0
+        },
+        ParkedVehicleDensity  = {
+            enable = false,
+            value = 0.0
+        },
+        RandomVehicleDensity  = {
+            enable = false,
+            value = 0.0
+        },
+
+    },
 
 }
