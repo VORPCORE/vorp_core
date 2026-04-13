@@ -34,27 +34,70 @@ if oneSyncConvar == 'off' then
 end
 
 
-ScriptList = {}
-Changelogs = 0
+local ScriptList = {}
+local Changelogs = 0
 
 VorpInitialized = false
---
-CreateThread(function()
-    local Resources = GetNumResources()
+local function changelog()
+    print('')
+    for _, v in pairs(ScriptList) do
+        local isNewVersion = v.Version ~= v.NewestVersion
+        local hasChangelog = v.CL
 
-    for i = 0, Resources, 1 do
-        local resource = GetResourceByFindIndex(i)
-        UpdateChecker(resource)
+        if isNewVersion and hasChangelog then
+            local resourceUpper = v.Resource:upper()
+            local clStringFmt = '^3%s - Changelog:\n^0%s\n^1###############################^0\n'
+            print(string.format(clStringFmt, resourceUpper, v.Changelog))
+        end
+    end
+    print('^0###############################################################################')
+end
+
+
+local function checker()
+    print("^3VORPcore Version check ")
+    print("^2Resources found\n")
+
+    local outdated, upToDate = {}, {}
+
+    for i, v in pairs(ScriptList) do
+        if string.find(v.NewestVersion, v.Version) then
+            table.insert(upToDate,
+                {
+                    message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ^2✅ ' .. 'Up to date - Version ' .. v.Version .. '\n'
+                })
+        elseif v.Version > v.NewestVersion then
+            table.insert(outdated, {
+                message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ⚠️ ' .. 'Mismatch (v' .. v.Version .. ') ^5- Official Version: ' .. v.NewestVersion .. ' ^0(' .. v.Github .. ')\n'
+            })
+        else
+            table.insert(outdated, {
+                message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ^1❌ ' .. 'Outdated (v' .. v.Version .. ') ^5- Update found: Version ' .. v.NewestVersion .. ' ^0(' .. v.Github .. ')\n'
+            })
+        end
+
+        if v.CL then
+            Changelogs = Changelogs + 1
+        end
+    end
+    -- print outdated first and up-to-date at the end
+    for _, data in ipairs(outdated) do
+        print(data.message)
     end
 
-    if next(ScriptList) ~= nil then
-        VorpInitialized = true
-        init_core()
-        Checker()
+    if Changelogs > 0 then
+        print('^1###############################')
+        changelog()
+    else
+        print('^0\n###############################################################################')
     end
-end)
 
-function UpdateChecker(resource)
+    for _, data in ipairs(upToDate) do
+        print(data.message)
+    end
+end
+
+local function updateChecker(resource)
     if resource and GetResourceState(resource) == 'started' then
         if GetResourceMetadata(resource, 'vorp_checker', 0) == 'yes' then
             local Name = GetResourceMetadata(resource, 'vorp_name', 0)
@@ -103,7 +146,7 @@ function UpdateChecker(resource)
                     if string.find(Version1, Version) then
                     else
                         if Version1 < Version then
-                            Changelog = "Your script version is newer than what was found in github"
+                            _Changelog = "Your script version is newer than what was found in github"
                             NewestVersion = Version
                         else
                             local MinV = NewestVersion:gsub("<" .. Version1 .. ">", "")
@@ -117,14 +160,14 @@ function UpdateChecker(resource)
 
                             local stripedVersions = StripedExtra:gsub("<%d?%d.%d?%d.?%d?%d?>", "")
 
-                            local Changelog = stripedVersions
-                            Changelog = string.gsub(Changelog, "\n", "")
-                            Changelog = string.gsub(Changelog, "-", " \n-"):gsub("%b<>", ""):sub(1, -2)
+                            local _Changelog = stripedVersions
+                            _Changelog = string.gsub(_Changelog, "\n", "")
+                            _Changelog = string.gsub(_Changelog, "-", " \n-"):gsub("%b<>", ""):sub(1, -2)
 
                             NewestVersion = Version1
 
                             Script['CL'] = true
-                            Script['Changelog'] = Changelog
+                            Script['Changelog'] = _Changelog
                         end
                     end
                     Script['NewestVersion'] = Version1
@@ -139,60 +182,17 @@ function UpdateChecker(resource)
     end
 end
 
-function Checker()
-    print("^3VORPcore Version check ")
-    print("^2Resources found\n")
+CreateThread(function()
+    local Resources = GetNumResources()
 
-    local outdated, upToDate = {}, {}
-
-    for i, v in pairs(ScriptList) do
-        if string.find(v.NewestVersion, v.Version) then
-            table.insert(upToDate,
-                {
-                    message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ^2✅ ' .. 'Up to date - Version ' .. v.Version .. '\n'
-                })
-        elseif v.Version > v.NewestVersion then
-            table.insert(outdated, {
-                message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ⚠️ ' .. 'Mismatch (v' .. v.Version .. ') ^5- Official Version: ' .. v.NewestVersion .. ' ^0(' .. v.Github .. ')\n'
-            })
-        else
-            table.insert(outdated, {
-                message = '^4' .. v.Name .. ' (' .. v.Resource .. ') ^1❌ ' .. 'Outdated (v' .. v.Version .. ') ^5- Update found: Version ' .. v.NewestVersion .. ' ^0(' .. v.Github .. ')\n'
-            })
-        end
-
-        if v.CL then
-            Changelogs = Changelogs + 1
-        end
-    end
-    -- print outdated first and up-to-date at the end
-    for _, data in ipairs(outdated) do
-        print(data.message)
+    for i = 0, Resources, 1 do
+        local resource = GetResourceByFindIndex(i)
+        updateChecker(resource)
     end
 
-    if Changelogs > 0 then
-        print('^1###############################')
-        Changelog()
-    else
-        print('^0\n###############################################################################')
+    if next(ScriptList) ~= nil then
+        VorpInitialized = true
+        init_core()
+        checker()
     end
-
-    for _, data in ipairs(upToDate) do
-        print(data.message)
-    end
-end
-
-function Changelog()
-    print('')
-    for _, v in pairs(ScriptList) do
-        local isNewVersion = v.Version ~= v.NewestVersion
-        local hasChangelog = v.CL
-
-        if isNewVersion and hasChangelog then
-            local resourceUpper = v.Resource:upper()
-            local clStringFmt = '^3%s - Changelog:\n^0%s\n^1###############################^0\n'
-            print(string.format(clStringFmt, resourceUpper, v.Changelog))
-        end
-    end
-    print('^0###############################################################################')
-end
+end)
