@@ -202,6 +202,8 @@ RegisterNetEvent('vorp:playerSpawn', function()
 
     local eventName <const> = tonumber(user._charperm) > 1 and "GoToSelectionMenu" or "SpawnUniqueCharacter"
     TriggerEvent(("vorp_character:server:%s"):format(eventName), _source)
+    -- set the default density multipliers for the player
+    TriggerClientEvent("vorp_lib:Client:SetDefaultDensityMultiplier", _source, Config.Multipliers)
 end)
 
 
