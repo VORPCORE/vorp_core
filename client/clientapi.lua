@@ -32,8 +32,8 @@ CoreFunctions.instancePlayers = function(set)
     TriggerServerEvent("vorp_core:instanceplayers", set)
 end
 
-CoreFunctions.AddWebhook = function(title, webhook, description, color, name, logo, footerlogo, avatar)
-    TriggerServerEvent('vorp_core:addWebhook', title, webhook, description, color, name, logo, footerlogo, avatar)
+CoreFunctions.AddWebhook = function()
+    print("client side webhook has been removed please use server side")
 end
 
 CoreFunctions.NotifyTip = function(text, duration)
