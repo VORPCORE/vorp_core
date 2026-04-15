@@ -145,7 +145,7 @@ local function openSkillsMenu(payload)
         enableCursor = true,
         divider = true,
         fixedHeight = true,
-        lastmenu = "openPlayerMenuUI",
+        lastmenu = "OpenPlayerMenuUI",
     }, function(data, _)
         if (data.current == "backup") then -- go back
             _G[data.trigger](payload)
@@ -195,7 +195,7 @@ local function openJobsMenu(payload)
         enableCursor = true,
         divider = true,
         fixedHeight = true,
-        lastmenu = "openPlayerMenuUI",
+        lastmenu = "OpenPlayerMenuUI",
     }, function(data, menu)
         if (data.current == "backup") then -- go back
             _G[data.trigger](payload)
@@ -217,7 +217,7 @@ local function openJobsMenu(payload)
     end)
 end
 
-local function openPlayerMenuUI(payload)
+function OpenPlayerMenuUI(payload)
     local menuPayload <const> = normalizeMenuPayload(payload)
     if not menuPayload then
         return
@@ -246,7 +246,7 @@ local function openPlayerMenuUI(payload)
     end
 
 
-    MenuData.Open('default', GetCurrentResourceName(), 'openPlayerMenuUI', {
+    MenuData.Open('default', GetCurrentResourceName(), 'OpenPlayerMenuUI', {
         title = T.title,
         subtext = T.subtext,
         elements = elements,
@@ -270,5 +270,5 @@ local function openPlayerMenuUI(payload)
 end
 
 RegisterNetEvent('vorp:OpenPlayerMenu', function(payload)
-    openPlayerMenuUI(payload)
+    OpenPlayerMenuUI(payload)
 end)
