@@ -195,4 +195,7 @@ CreateThread(function()
         init_core()
         checker()
     end
+
+    -- just warn them that a new feature is comming so they can prepare for it
+    print("^3[WARNING] ^7new feature to register jobs in config/jobs.lua or by using exports.\n ^3for now this feature is disabled^7 but will be ^3enabled very soon^7 we are giving you time.\n reach out to the discord for more information about it.")
 end)
