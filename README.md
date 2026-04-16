@@ -64,8 +64,6 @@ The most common issues are usually these:
 
 **Contributors:** Special thanks to **goncalobsccosta** and all community members for their contributions and support in the development and improvement of VORP Core.
 
-
-
 ## Support
 
 If you run into an issue:
