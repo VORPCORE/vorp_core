@@ -58,6 +58,14 @@ The most common issues are usually these:
 > [!IMPORTANT]
 > If the framework starts but other VORP resources fail to load correctly, check resource order before changing code. In most cases the issue is a missing dependency or a bad start sequence.
 
+## Credits
+
+**Original Framework:** Inspired by the VORP Core C# version, this Lua implementation extends the core functionality while preserving its foundational principles.
+
+**Contributors:** Special thanks to **goncalobsccosta** and all community members for their contributions and support in the development and improvement of VORP Core.
+
+
+
 ## Support
 
 If you run into an issue:

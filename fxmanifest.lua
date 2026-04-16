@@ -36,12 +36,6 @@ files {
 
 ui_page 'ui/index.html'
 
-dependencies {
-    'oxmysql',
-    'spawnmanager',
-    'vorp_menu'
-}
-
 version '3.3'
 vorp_checker 'yes'
 vorp_name '^4Resource version Check^3'
