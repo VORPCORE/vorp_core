@@ -35,18 +35,12 @@ ensure vorp_menu
 ensure vorp_core
 ```
 
-## What This Resource Handles
+## Configuration
 
-`vorp_core` is responsible for core framework behavior such as:
+> [!WARNING]
+> Configuring `vorp_core` can take time. Read the configuration files carefully and adapt them to your server before going live. The default setup is not meant to match every server out of the box.
 
-- player session and initialization flow
-- shared callbacks and framework exports
-- job and group management
-- admin and utility commands
-- framework notifications and UI helpers
-- player state, respawn, and server-side character loading hooks
-
-For full configuration and API usage, use the official docs:
+For full configuration details and API usage, use the official docs:
 
 - [VORP Documentation](https://docs.vorp-core.com/introduction)
 
