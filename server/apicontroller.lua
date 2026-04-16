@@ -223,20 +223,78 @@ CoreFunctions.Player = {
     end,
 }
 
+CoreFunctions.RegisterJobs = function(data, resourcename)
+    if not data or type(data) ~= "table" then return print("^1[VORPCORE] ^7not a table") end
+    if not resourcename then return print("^1[VORPCORE] ^7resource name is missing") end
+
+    local config_data <const> = Config.REGISTERED_JOBS
+    if not config_data then return print("^1[VORPCORE] ^7update vorp core missing config file") end
+
+    -- build the tables manually to avoid user errors
+    for jobname, v in pairs(data) do
+        config_data[jobname] = {}
+        config_data[jobname].RESOURCE = resourcename
+        config_data[jobname].PRIVATE_JOB = v.privateJob
+
+        if v.grades then
+            config_data[jobname].GRADES = {}
+            if type(v.grades) ~= "table" then
+                print("^1[VORPCORE] ^7Job ^3" .. jobname .. "^7 grades are not a table", "^7Resource: ^3" .. resourcename)
+                goto groups
+            end
+
+            for grade, info in pairs(v.grades) do
+                config_data[jobname].GRADES[grade] = {}
+                if not info.label then
+                    print("^1[VORPCORE] ^7Job ^3" .. jobname .. "^7 grade ^3" .. grade .. "^7 does not have a label", "^7Resource: ^3" .. resourcename)
+                end
+
+                config_data[jobname].GRADES[grade].LABEL = info.label or "Unknown"
+                config_data[jobname].GRADES[grade].PRIVATE_GRADE = info.privateGrade
+            end
+        end
+
+        ::groups::
+
+        if v.groups then
+            config_data[jobname].GROUPS = {}
+
+            if type(v.groups) ~= "array" then
+                print("^1[VORPCORE] ^7Job ^3" .. jobname .. "^7 groups are not an array", "^7Resource: ^3" .. resourcename)
+                goto continue
+            end
+
+            for _, groupName in ipairs(v.groups) do
+                config_data[jobname].GROUPS[groupName] = true
+            end
+        end
+
+        ::continue::
+    end
+end
+
+-- to get it into your admin scripts for example.
+CoreFunctions.GetRegisteredJobs = function(job)
+    if job then
+        return Config.REGISTERED_JOBS[job]
+    end
+    return Config.REGISTERED_JOBS
+end
+
+
 exports('GetCore', function()
     return CoreFunctions
 end)
 
 -----------------------------------------------------------------------------
---- use exports
 ---@deprecated
 AddEventHandler('getCore', function(cb)
     cb(CoreFunctions)
 end)
 
---- use exports
 ---@deprecated
 AddEventHandler('getWhitelistTables', function(cb)
+    print("^1[VORPCORE] ^7getWhitelistTables event is deprecated please use export exports.vorp_core:GetCore().Whitelist instead this will be deleted soon")
     cb(CoreFunctions.Whitelist)
 end)
 

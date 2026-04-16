@@ -23,6 +23,7 @@ client_scripts {
 
 server_scripts {
     'config/logs.lua',
+    'config/jobs.lua',
     '@oxmysql/lib/MySQL.lua',
     'server/class/*.lua',
     'config/commands.lua',

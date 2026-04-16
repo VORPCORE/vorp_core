@@ -564,6 +564,7 @@ function Character(data)
         userData.updateInvCapacity = function(slots)
             self.setSlots(slots)
         end
+
         userData.setStatus = function(status)
             self.Status(status)
         end
@@ -579,14 +580,20 @@ function Character(data)
         userData.setJobGrade = function(jobgrade, flag)
             self.Jobgrade(jobgrade, flag)
         end
+
         userData.setJobLabel = function(joblabel)
             self.Joblabel(joblabel)
         end
+
         userData.setGroup = function(group, flag)
             self.Group(group, flag)
         end
 
         userData.setJob = function(job, flag)
+            -- just warn them that a new feature is comming so they can prepare for it
+            if not Config?.REGISTERED_JOBS[job] then
+                print("^3[WARNING] ^7new feature to register jobs in config/jobs.lua or by using exports.\n ^3for now this feature is disabled^7 but will be ^3enabled very soon^7 we are giving you time.\n reach out to the discord for more information about it.")
+            end
             self.Job(job, flag)
         end
 

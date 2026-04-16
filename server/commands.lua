@@ -119,6 +119,44 @@ local function sendDiscordLogs(link, data, arg1, arg2, arg3)
     end
 end
 
+local function isJobRegistered(newjob, jobgrade, source)
+    if not Config.REGISTERED_JOBS[newjob] then
+        CoreFunctions.NotifyObjective(source, ("Job not found with this job name %s"):format(newjob), 4000)
+        return false
+    end
+
+    if Config.REGISTERED_JOBS[newjob].PRIVATE_JOB then
+        CoreFunctions.NotifyObjective(source, "this job is private and cant be set by admins", 4000)
+        return false
+    end
+
+    if Config.REGISTERED_JOBS[newjob]?.GROUPS and next(Config.REGISTERED_JOBS[newjob].GROUPS) then
+        local group <const> = CoreFunctions.getUser(source).getGroup
+        if not Config.REGISTERED_JOBS[newjob].GROUPS[group] then
+            CoreFunctions.NotifyObjective(source, "your rank is not allowed to give this job to players", 4000)
+            return false
+        end
+    end
+
+    -- if no grades are found then we dont need to check for grades
+    if not Config.REGISTERED_JOBS[newjob]?.GRADES then
+        goto continue
+    end
+
+    if not Config.REGISTERED_JOBS[newjob].GRADES[jobgrade] then
+        CoreFunctions.NotifyObjective(source, ("Grade not found with this job name %s and grade %s"):format(newjob, jobgrade), 4000)
+        return false
+    end
+
+    if Config.REGISTERED_JOBS[newjob].GRADES[jobgrade].PRIVATE_GRADE then
+        CoreFunctions.NotifyObjective(source, "this grade is private and cant be set by admins", 4000)
+        return false
+    end
+
+    ::continue::
+    return true
+end
+
 --ADDGROUPS
 function SetGroup(data)
     local target = tonumber(data.args[1])
@@ -151,7 +189,9 @@ function AddJob(data)
     local jobgrade = tonumber(data.args[3])
     local joblabel = tostring(data.args[4]) .. " " .. (data.args[5] and tostring(data.args[5]) or "")
     local Character = CoreFunctions.getUser(target).getUsedCharacter
-
+    if not isJobRegistered(newjob, jobgrade, data.source) then
+        return
+    end
     Character.setJob(newjob)
     Character.setJobGrade(jobgrade)
     Character.setJobLabel(joblabel)
@@ -422,6 +462,8 @@ function AddMultiJob(data)
     local count <const> = character.getMultiJobsCount()
     if count >= maxJobs then return CoreFunctions.NotifyRightTip(_source, Translation[Lang].Notify.MultiJob.ReachedMaxMJob, 4000) end
 
+    -- if not isJobRegistered(job, grade, _source) then return end -- we disable it for now to give people time to add their jobs to the config
+
     character.setMultiJob(job, grade, label)
     sendDiscordLogs(data.config.webhook, data, _source, job, grade)
     CoreFunctions.NotifyRightTip(_source, string.format(Translation[Lang].Notify.MultiJob.YouAddedMJob, job, target), 4000)
@@ -435,6 +477,8 @@ function RemoveMultiJob(data)
     local job <const> = data.args[2]
     local user <const> = CoreFunctions.getUser(target)
     if not user then return end
+
+    -- if not Config.REGISTERED_JOBS[job] then return CoreFunctions.NotifyRightTip(_source, ("Job not found with this job name %s"):format(job), 4000) end
 
     local character <const> = user.getUsedCharacter
     local result <const> = character.removeMultiJob(job)
@@ -536,6 +580,8 @@ AddEventHandler("playerDropped", function(source)
         usersJobCoolDown[_source] = nil
     end
 end)
+
+
 
 --============================================ CHAT ADD SUGGESTION ========================================================--
 
