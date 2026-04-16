@@ -1,117 +1,73 @@
-# VORP Core
+# vorp_core
 
-## Introduction
+`vorp_core` is the base framework layer for RedM servers running VORP.
 
-VORP Core is a comprehensive Lua-based framework for RedM, designed to enhance server functionality and player experience with a wide array of configurable settings and commands.
+It provides the shared player session logic, character state handling, jobs, groups, callbacks, notifications, commands, and core exports that other VORP resources build on top of.
 
-## Requirements
+If your server uses multiple VORP resources, this is one of the main resources that needs to be loaded correctly first.
 
-- [oxmysql](https://github.com/overextended/oxmysql/releases): A must-have for database operations, ensuring smooth data handling and integration.
+> [!NOTE]
+> This repository is the framework layer, not a complete gameplay pack by itself. Resources such as inventory, housing, hunting, crafting, and character systems are expected to run around it.
 
-## Installation Guide
+## Dependencies
 
-1. **Setup:**
-   - Download and ensure `oxmysql` is properly set up and configured in your RedM server environment.
-2. **VORP Core Installation:**
-   - Rename the downloaded folder to `vorp_core`.
-   - Move the `vorp_core` folder into your server's resources directory, usually found under `\resources\[VORP]\vorp_core`.
-   - Include `ensure vorp_core` in your server's `resources.cfg/server.cfg` file, placing it at the top of the load order for priority loading.
+`vorp_core` requires these resources to be available:
 
-## Documentation
+- `oxmysql`
+- `spawnmanager`
+- `vorp_menu`
 
-- [Documentation](https://docs.vorp-core.com/introduction)
-- Direct link to the full VORP Core documentation for in-depth details and guides.
+## Installation
 
----
+1. Place `vorp_core` in your server resources folder.
+2. Make sure the required dependencies are started before it.
+3. Add `ensure vorp_core` to your server config.
+4. Start dependent VORP resources such as `vorp_character` and `vorp_inventory` after `vorp_core`.
+5. Review the config files before going live:
+   `config/config.lua`, `config/commands.lua`, `config/logs.lua`, and `translation/language.lua`.
 
-## Features Overview
+A typical load order looks like this:
 
-## Configuration Options (`config.lua`)
+```cfg
+ensure oxmysql
+ensure spawnmanager
+ensure vorp_menu
+ensure vorp_core
+```
 
-### Server Settings
-- **Language:** Set the server's language, referring to available options in the 'translation' folder.
-- **OneSync:** Toggle OneSync integration (`true` for enabled).
-- **Database Updates:** Enable automatic database updates.
-- **Player Info Logs:** Configure logging of player information on join/leave.
+## What This Resource Handles
 
-### Starting Configuration
-- **Initial Resources:** Set starting amounts for gold, money, role-play currency, and experience points.
-- **Default Player Settings:** Configure default job, job grade, user group, and job label for new players.
-- **Whitelist and Auto-update:** Manage whitelist settings and auto-updates.
+`vorp_core` is responsible for core framework behavior such as:
 
-### Player Limits
-- **Health and Stamina:** Set maximum health and stamina for players.
-- **PvP Settings:** Enable or disable player vs player combat and toggling.
+- player session and initialization flow
+- shared callbacks and framework exports
+- job and group management
+- admin and utility commands
+- framework notifications and UI helpers
+- player state, respawn, and server-side character loading hooks
 
-### Multicharacter Support
-- **Character Limits:** Set the maximum number of characters a player can create.
-- **Discord ID Saving:** Choose to save Discord IDs in the character/user database.
+For full configuration and API usage, use the official docs:
 
-### UI Core Settings
-- **UI Visibility:** Manage the visibility of various UI elements, including player cores and the Dead Eye core.
+- [VORP Documentation](https://docs.vorp-core.com/introduction)
 
-### Webhook Configurations
-- **Discord Integration:** Configure webhook color, name, logo, and footer for Discord integration.
+## Common Setup Mistakes
 
-### Map Configurations
-- **Radar Settings:** Customize radar types for different scenarios (on foot, on horse).
+The most common issues are usually these:
 
-### Respawn Settings
-- **Health on Respawn/Resurrection:** Define health parameters for respawning and resurrection.
-- **Respawn Mechanics:** Configure respawn timers, keys, and combat logging penalties.
+- missing `oxmysql` or starting it after `vorp_core`
+- starting `vorp_menu` after `vorp_core`
+- changing the folder name instead of keeping it as `vorp_core`
+- placing dependent resources before `vorp_core` in the load order
+- expecting `vorp_core` alone to replace the rest of the VORP stack
+- leaving development-oriented settings enabled in production without reviewing the config first
 
-### Ban System Configurations
-- **Time Formatting:** Set the date and time format for ban notifications.
-- **Time Zone Settings:** Configure server time zone and time difference from UTC.
+> [!IMPORTANT]
+> If the framework starts but other VORP resources fail to load correctly, check resource order before changing code. In most cases the issue is a missing dependency or a bad start sequence.
 
-### Command Permission Settings
-- **Command Permissions:** Manage permissions for using various commands, including admin rights in the database.
+## Support
 
-### Discord Rich Presence Integration
-- **Rich Presence Settings:** Customize Discord rich presence, including maximum players, application ID, and button configurations.
+If you run into an issue:
 
----
-
-### Commands Overview (`commands.lua`)
-
-##### Administrative Commands
-- **addGroup:** Assign a group to a player with specified ID and group name.
-- **addJob:** Assign a job to a player, including job name, grade, and salary.
-- **addItem:** Add items to a player's inventory with item name and quantity.
-- **addWeapon:** Provide weapons to a player with weapon name and ammo count.
-- **delMoney:** Remove currency from a player's account, specifying type and amount.
-- **addMoney:** Add currency to a player's account, specifying type and amount.
-- **delWagons:** Delete a player's wagons.
-- **revive:** Revive a player with specified ID.
-- **teleport:** Teleport a player to a marked location.
-- **delHorse:** Delete a player's horse.
-- **heal:** Heal a player and replenish their needs.
-- **addWhitelist:** Add a player to the whitelist.
-- **unWhitelist:** Remove a player from the whitelist.
-- **ban:** Ban a player with specified duration.
-- **unBan:** Unban a player.
-- **warn:** Issue a warning to a player.
-- **unWarn:** Remove a warning from a player.
-- **charName:** Change a character's name.
-- **charCreateAdd:** Allow a player to create additional characters.
-- **charCreateRemove:** Remove a player's ability to create additional characters.
-- **myJob:** Display the player's current job and details.
-
-These commands and configurations offer extensive control over the server's gameplay, administration, and player management, ensuring a tailored and smooth experience for all participants.
-
----
-
-## Support and Community
-
-For assistance, join the [VORP Core Discord](https://discord.gg/DHGVAbCj7N) community. Engage with developers and server administrators, share insights, and stay updated on the latest features and improvements.
-
----
-
-## Credits
-
-- **Original Framework:** Inspired by the [VORP-Core C# version](https://github.com/VORPCORE/VORP-Core/releases), this Lua version extends the core's functionality while maintaining its foundational principles.
-- **Contributors:** Special thanks to `goncalobsccosta#9041` and all community members for their contributions and support in the development and enhancement of VORP Core.
-
----
-
-VORP Core Lua Version offers a robust platform for RedM servers, providing the tools necessary for a highly customizable and immersive gameplay experience.
+- if you know your way around the code, feel free to open a PR
+- if not, open an issue on GitHub
+- or join the VORP Discord: [discord.gg/DHGVAbCj7N](https://discord.gg/DHGVAbCj7N)
