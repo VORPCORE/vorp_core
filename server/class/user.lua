@@ -299,6 +299,9 @@ function User(source, identifier, group, playerwarnings, license, char, max_jobs
 
     self.SetUsedCharacter = function(charid)
         if self._usercharacters[charid] then
+            if self.usedCharacterId == charid then
+                return print("character is already selected charid: ", charid, "this player tried to join twice with the same character possible exploit!!")
+            end
             self.UsedCharacterId(charid)
         end
     end
