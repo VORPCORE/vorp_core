@@ -29,7 +29,7 @@ local function checkAce(ace, source)
 end
 
 local function logMessage(_source)
-    local Identifier = GetPlayerIdentifier(_source, 1) -- steam id
+    local Identifier = GetPlayerIdentifierByType(_source, 'steam') -- steam id
     local getDiscord = GetPlayerIdentifierByType(_source, 'discord')
     local discordId = getDiscord and string.sub(getDiscord, 9) or "No discord found"
     local ip = GetPlayerEndpoint(_source)    -- ip
@@ -110,7 +110,7 @@ end)
 --====================================== FUNCTIONS =========================================================--
 
 local function sendDiscordLogs(link, data, arg1, arg2, arg3)
-    if link then
+    if link and data.source then
         local message = logMessage(data.source)
         local custom = data.config.custom
         local finaltext = message .. string.format(custom, arg1, arg2, arg3)
