@@ -131,6 +131,22 @@ end
 CreateThread(function()
     repeat Wait(5000) until LocalPlayer.state.IsInSession
 
+    local eClientConfigFlag = {
+        UIVisibleWhenDead = 1,
+        DisableDeathAudioScene = 2,
+        DisableRemoteAttachments = 3
+    }
+
+    if Config.ShowUIWhenDead then
+        SetClientConfigFlag(eClientConfigFlag.UIVisibleWhenDead, true)
+    end
+    if Config.DisableDeathAudioScene then
+        SetClientConfigFlag(eClientConfigFlag.DisableDeathAudioScene, true)
+    end
+    if Config.DisableRemoteAttachments then
+        SetClientConfigFlag(eClientConfigFlag.DisableRemoteAttachments, true)
+    end
+
     local lastPlayerPed = PlayerPedId()
     while true do
         local configHash <const> = isIndoors(lastPlayerPed) and `RADAR_CONFIG_INDOOR` or `RADAR_CONFIG_CODE_CONTROL`
