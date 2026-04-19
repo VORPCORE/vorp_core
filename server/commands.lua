@@ -569,7 +569,7 @@ RegisterNetEvent("vorp:SwitchMultiJobMenu", function(job)
 
     local logData <const> = Commands.openPlayerMenu
     if logData then
-        local custom <const> = { config = logData }
+        local custom <const> = { config = logData, source = _source }
         sendDiscordLogs(logData.webhook, custom, _source, value[job].label, value[job].grade)
     end
 end)
