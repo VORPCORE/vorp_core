@@ -138,13 +138,13 @@ CreateThread(function()
     }
 
     if Config.ShowUIWhenDead then
-        SetClientConfigFlag(eClientConfigFlag.UIVisibleWhenDead, true)
+        SetClientConfigBool(eClientConfigFlag.UIVisibleWhenDead, true)
     end
     if Config.DisableDeathAudioScene then
-        SetClientConfigFlag(eClientConfigFlag.DisableDeathAudioScene, true)
+        SetClientConfigBool(eClientConfigFlag.DisableDeathAudioScene, true)
     end
     if Config.DisableRemoteAttachments then
-        SetClientConfigFlag(eClientConfigFlag.DisableRemoteAttachments, true)
+        SetClientConfigBool(eClientConfigFlag.DisableRemoteAttachments, true)
     end
 
     local lastPlayerPed = PlayerPedId()
