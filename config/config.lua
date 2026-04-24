@@ -6,11 +6,23 @@ Lang = "English"
 Config = Config or {}
 
 Config = {
-    autoUpdateDB             = true, -- Enables automatic database updates.
 
-    ReportCrashes            = true, -- Reports crashes to https://monitor.gtp-dev.com login in here to create your API KEY , by doing this you will help the community to improve the server stability and fix crashes faster
+    --GAMEPLAY CONFIGURATIONS
+    EnableVehicleTransitions = false, -- if true horses dont slow down when passing through other horses, neither the prompt to jump will show
 
-    API_KEY                  = "",   -- API key for crash reporting. Get your API key at https://monitor.gtp-dev.com to allow more requests make a donation in the website
+    DisableShoving           = false, -- if true players cant shove other players
+
+    DisableTackling          = false, -- if true players cant tackle other players
+
+    DisableChoking           = false, -- if true players cant choke other players
+
+    DisableGrapple           = false, -- if true will disable grapple
+
+    autoUpdateDB             = true,  -- Enables automatic database updates.
+
+    ReportCrashes            = true,  -- Reports crashes to https://monitor.gtp-dev.com login in here to create your API KEY , by doing this you will help the community to improve the server stability and fix crashes faster
+
+    API_KEY                  = "",    -- API key for crash reporting. Get your API key at https://monitor.gtp-dev.com to allow more requests make a donation in the website
 
     -- (IF YOU HAVE WHITELIST ENABLED DONT ENABLE THIS)--
     DeleteFromUsersTable     = true, -- this will delete from users table if character does not exist "optimising the queries"

@@ -131,10 +131,24 @@ end
 CreateThread(function()
     repeat Wait(5000) until LocalPlayer.state.IsInSession
 
-    local eClientConfigFlag = {
+    local eClientConfigFlag <const> = {
         UIVisibleWhenDead = 1,
         DisableDeathAudioScene = 2,
         DisableRemoteAttachments = 3
+    }
+
+    local ePedActionDisableFlag <const> = {
+        ADF_GRAPPLE = 1,
+        ADF_SHOVE = 5,
+        ADF_CHOKE = 6,
+        ADF_TACKLE = 33,
+
+    }
+
+    local ePedConfigFlag <const> = {
+        PCF_EnableAsVehicleTransitionDestination = 319,
+        PCF_DisableVehicleTransitions = 366,
+        PCF_EnableMountCoverForPedInMP = 560,
     }
 
     if Config.ShowUIWhenDead then
@@ -154,8 +168,29 @@ CreateThread(function()
 
         -- for horse ducking feature like RDO
         if lastPlayerPed ~= PlayerPedId() then
-            SetPedConfigFlag(lastPlayerPed, 560, true)
             lastPlayerPed = PlayerPedId()
+            SetPedConfigFlag(lastPlayerPed, ePedConfigFlag.PCF_EnableMountCoverForPedInMP, true)
+
+            if Config.DisableVehicleTransitions then
+                SetPedConfigFlag(lastPlayerPed, ePedConfigFlag.PCF_EnableAsVehicleTransitionDestination, false)
+                SetPedConfigFlag(lastPlayerPed, ePedConfigFlag.PCF_DisableVehicleTransitions, true)
+            end
+
+            if Config.DisableShoving then
+                SetPedActionDisableFlag(lastPlayerPed, ePedActionDisableFlag.ADF_SHOVE)
+            end
+
+            if Config.DisableTackling then
+                SetPedActionDisableFlag(lastPlayerPed, ePedActionDisableFlag.ADF_TACKLE)
+            end
+
+            if Config.DisableChoking then
+                SetPedActionDisableFlag(lastPlayerPed, ePedActionDisableFlag.ADF_CHOKE)
+            end
+
+            if Config.DisableGrapple then
+                SetPedActionDisableFlag(lastPlayerPed, ePedActionDisableFlag.ADF_GRAPPLE)
+            end
         end
 
         Wait(1000)
