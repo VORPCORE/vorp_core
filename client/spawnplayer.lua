@@ -165,7 +165,9 @@ AddEventHandler('vorp:initCharacter', function(coords, heading, isdead)
                 HealthData = {}
             end
         else
-            CoreAction.Admin.HealPlayer()
+            SetTimeout(3000, function()
+                CoreAction.Admin.HealPlayer()
+            end)
         end
     end
 
