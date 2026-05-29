@@ -244,14 +244,15 @@ end)
 
 
 CreateThread(function()
+    EnableHudContext(`HUD_CTX_HUD_IN_GUARMA_AND_BROKE`) -- HIDES THE CURRENCY WIDGET
     while true do
         Wait(0)
-        DisableControlAction(0, 0x580C4473, true)              -- Disable hud
-        DisableControlAction(0, 0xCF8A4ECA, true)              -- Disable hud
-        DisableControlAction(0, 0x9CC7A1A4, true)              -- disable special ability when open hud
-        DisableControlAction(0, 0x1F6D95E5, true)              -- diable f4 key that contains HUD
-        if IsUiappActiveByHash(`MAP`) == 1 then                -- only when map is open incase someone needs to use the X key
-            DisableControlAction(0, `INPUT_FRONTEND_RS`, true) -- disables the x button that freezes players when in the big map
+        DisableControlAction(0, `INPUT_HUD_SPECIAL`, true)                   -- Disable hud not sure which one disables
+        DisableControlAction(0, `INPUT_REVEAL_HUD`, true)                    -- Disables alt key for this context that reveals money and honor bar
+        DisableControlAction(0, `INPUT_QUICK_SHORTCUT_ABILITIES_MENU`, true) -- disable special ability when open weapon wheel
+        DisableControlAction(0, `INPUT_SELECT_ITEM_WHEEL`, true)             -- disables f4 for items wheel
+        if IsUiappActiveByHash(`MAP`) == 1 then                              -- only when map is open incase someone needs to use the X key
+            DisableControlAction(0, `INPUT_FRONTEND_RS`, true)               -- disables the x button that freezes players when in the big map
         end
     end
 end)

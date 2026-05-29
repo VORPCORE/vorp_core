@@ -1,5 +1,6 @@
 {
     "Lua.diagnostics.globals": [
         "MySQL"
-    ]
+    ],
+    "cfxlua.game": "rdr3"
 }
