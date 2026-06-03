@@ -189,9 +189,10 @@ function AddJob(data)
     local jobgrade = tonumber(data.args[3])
     local joblabel = tostring(data.args[4]) .. " " .. (data.args[5] and tostring(data.args[5]) or "")
     local Character = CoreFunctions.getUser(target).getUsedCharacter
-    if not isJobRegistered(newjob, jobgrade, data.source) then
-        return
-    end
+    -- if not isJobRegistered(newjob, jobgrade, data.source) then
+    --     return
+    -- end
+    -- we will give a bit of time for people to add to configs and or through scripts
     Character.setJob(newjob)
     Character.setJobGrade(jobgrade)
     Character.setJobLabel(joblabel)
