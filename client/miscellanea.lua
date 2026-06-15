@@ -50,7 +50,6 @@ local events = {
     [`EVENT_CHALLENGE_GOAL_COMPLETE`] = true,
     [`EVENT_CHALLENGE_REWARD`] = true,
     [`EVENT_DAILY_CHALLENGE_STREAK_COMPLETED`] = true,
-    [`EVENT_CHALLENGE_GOAL_UPDATE`] = true,
 }
 
 --f6 photo mode doesnt work so just hide the prompt
