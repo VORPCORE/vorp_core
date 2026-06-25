@@ -42,7 +42,7 @@ AddEventHandler('vorp:ShowTopNotification', function(tittle, subtitle, duration)
 end)
 
 AddEventHandler('vorp:ShowAdvancedRightNotification', function(text, dict, icon, text_color, duration, quality)
-    VorpNotification:NotifyAvanced(tostring(text), tostring(dict), tostring(icon),
+    VorpNotification:NotifyAdvanced(tostring(text), tostring(dict), tostring(icon),
         tostring(text_color), tonumber(duration), quality)
 end)
 

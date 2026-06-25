@@ -61,8 +61,8 @@ CoreFunctions.NotifySimpleTop = function(text, subtitle, duration)
     VorpNotification:NotifySimpleTop(tostring(text), tostring(subtitle), tonumber(duration))
 end
 
-CoreFunctions.NotifyAvanced = function(text, dict, icon, text_color, duration, quality, showquality)
-    VorpNotification:NotifyAvanced(tostring(text), tostring(dict), tostring(icon), tostring(text_color), tonumber(duration), quality, showquality)
+CoreFunctions.NotifyAdvanced = function(text, dict, icon, text_color, duration, quality, showquality)
+    VorpNotification:NotifyAdvanced(tostring(text), tostring(dict), tostring(icon), tostring(text_color), tonumber(duration), quality, showquality)
 end
 
 CoreFunctions.NotifyBasicTop = function(text, duration)

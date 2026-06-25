@@ -26,7 +26,7 @@ exports("ShowTopNotification", function(title, subtext, duration)
 end)
 
 exports("ShowAdvancedRightNotification", function(_text, _dict, icon, text_color, duration, quality, showquality)
-  VorpNotification:NotifyAvanced(tostring(_text), tostring(_dict), tostring(icon), tostring(text_color),
+  VorpNotification:NotifyAdvanced(tostring(_text), tostring(_dict), tostring(icon), tostring(text_color),
     tonumber(duration), quality, showquality)
 end)
 

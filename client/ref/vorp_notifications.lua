@@ -8,7 +8,7 @@
 ---@field public NotifyRightTip fun(tipMessage: string, duration?: number): nil
 ---@field public NotifyObjective fun(message: string, duration?: number): nil
 ---@field public NotifySimpleTop fun(tittle: string, duration?: number): nil
----@field public NotifyAvanced fun(text: string, dict: string, icon: string, text_color: string, duration?: number, quality?: number, showquality?: boolean): nil
+---@field public NotifyAdvanced fun(text: string, dict: string, icon: string, text_color: string, duration?: number, quality?: number, showquality?: boolean): nil
 ---@field public NotifyCenter fun(text: string, duration?: number, text_color?: string): nil
 ---@field public NotifyBottomRight fun(text: string, duration?: number): nil
 ---@field public NotifyFail fun(title: string, subtitle: string, duration?: number): nil
@@ -164,7 +164,7 @@ end
 ---@param duration? number -- default 3000
 ---@param quality? number -- default 1
 ---@param showquality? boolean -- default false
-function VorpNotification:NotifyAvanced(text, dict, icon, text_color, duration, quality, showquality)
+function VorpNotification:NotifyAdvanced(text, dict, icon, text_color, duration, quality, showquality)
   CoreAction.Utils.LoadTexture(dict)
 
   local structConfig = DataView.ArrayBuffer(8 * 7)
@@ -389,8 +389,8 @@ function VorpNotification:Test()
   VorpNotification:NotifySimpleTop(testText, testText, testDuration)
   print("^2Displaying: NotifySimpleTop")
   Wait(testWaitDuration)
-  VorpNotification:NotifyAvanced(testText, testDict, testIcon, testColor, testDuration)
-  print("^2Displaying: NotifyAvanced")
+  VorpNotification:NotifyAdvanced(testText, testDict, testIcon, testColor, testDuration, 1, false)
+  print("^2Displaying: NotifyAdvanced")
   Wait(testWaitDuration)
   VorpNotification:NotifyCenter(testText, testDuration)
   print("^2Displaying: NotifyCenter")
