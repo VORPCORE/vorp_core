@@ -207,18 +207,31 @@ RegisterNetEvent('vorp:playerSpawn', function()
 end)
 
 
+--- Validates a client-reported core stat before it is cached or persisted:
+--- must be numeric and within the 0-100 core range (issue #184).
+local function SanitizeCoreValue(value)
+    value = tonumber(value)
+    if not value then
+        return nil
+    end
+    return math.min(100, math.max(0, value))
+end
+
 RegisterNetEvent('vorp:SaveHealth', function(healthOuter, healthInner)
     local _source = source
     local identifier = GetPlayerIdentifierByType(_source, 'steam')
 
-    if healthInner and healthOuter then
+    healthOuter = SanitizeCoreValue(healthOuter)
+    healthInner = SanitizeCoreValue(healthInner)
+
+    if healthOuter and healthInner then
         local user = _users[identifier] or nil
 
         if user then
             local used_char = user.GetUsedCharacter() or nil
 
             if used_char then
-                used_char.HealthOuter(healthOuter - healthInner)
+                used_char.HealthOuter(math.max(0, healthOuter - healthInner))
                 used_char.HealthInner(healthInner)
             end
         end
@@ -228,6 +241,10 @@ end)
 RegisterNetEvent('vorp:SaveStamina', function(staminaOuter, staminaInner)
     local _source = source
     local identifier = GetPlayerIdentifierByType(_source, 'steam')
+
+    staminaOuter = SanitizeCoreValue(staminaOuter)
+    staminaInner = SanitizeCoreValue(staminaInner)
+
     if staminaOuter and staminaInner then
         local user = _users[identifier] or nil
         if user then
@@ -245,6 +262,15 @@ RegisterNetEvent('vorp:HealthCached', function(healthOuter, healthInner, stamina
     local identifier = GetPlayerIdentifierByType(_source, 'steam')
 
     if not identifier then
+        return
+    end
+
+    healthOuter = SanitizeCoreValue(healthOuter)
+    healthInner = SanitizeCoreValue(healthInner)
+    staminaOuter = SanitizeCoreValue(staminaOuter)
+    staminaInner = SanitizeCoreValue(staminaInner)
+
+    if not (healthOuter and healthInner and staminaOuter and staminaInner) then
         return
     end
 
