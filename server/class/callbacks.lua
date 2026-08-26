@@ -70,8 +70,17 @@ function ServerRPC.Callback.TriggerAwait(name, source, ...)
 end
 
 -- * TRIGGER CLIENT CALLBACKS HANDLER
-local callBackId = 0
 local TriggeredCalls = {}
+
+--- Generates an unpredictable per-call identifier so pending responses cannot be
+--- guessed or forged by third-party clients (previously a shared sequential counter).
+local function GenerateUniqueId(name)
+    local uniqueId
+    repeat
+        uniqueId = ("%s_%d_%d"):format(name, math.random(100000, 999999), math.random(1000000000, 2147483647))
+    until not TriggeredCalls[uniqueId]
+    return uniqueId
+end
 
 function ServerRPC:TriggerRpcAsync(source, ...)
     if not self.name and type(self.name) ~= "string" then
@@ -82,34 +91,25 @@ function ServerRPC:TriggerRpcAsync(source, ...)
         return error("Callback source must exist and be a number!", 1)
     end
 
-    callBackId = callBackId + 1
-    if callBackId >= 65565 then
-        callBackId = 0
-        TriggeredCalls = {}
-    end
-
-    self.uniqueId = self.name .. tostring(callBackId)
+    self.uniqueId = GenerateUniqueId(self.name)
 
     TriggerClientEvent("vorp:TriggerServerCallback", source, self.name, self.uniqueId, false, ...)
 
-    TriggeredCalls[self.uniqueId] = self._callback
+    -- Bind the pending response to the player it was sent to.
+    TriggeredCalls[self.uniqueId] = { src = source, callback = self._callback }
 end
 
 function ServerRPC:TriggerRpcAwait(source, ...)
     if not self.name and type(self.name) ~= "string" then
         return error("Callback name must be a string!", 1)
     end
-    callBackId = callBackId + 1
-    if callBackId >= 65565 then
-        callBackId = 0
-        TriggeredCalls = {}
-    end
 
-    self.uniqueId = self.name .. tostring(callBackId)
+    self.uniqueId = GenerateUniqueId(self.name)
     TriggerClientEvent("vorp:TriggerServerCallback", source, self.name, self.uniqueId, true, ...)
 
     local promise = promise.new()
-    TriggeredCalls[self.uniqueId] = promise
+    -- Bind the pending response to the player it was sent to.
+    TriggeredCalls[self.uniqueId] = { src = source, promise = promise }
 
     local result = Citizen.Await(promise)
     return result
@@ -117,14 +117,22 @@ end
 
 function ServerRPC.ExecuteRpc(uniqueId, isSync, name, ...)
     local _source = source
-    if not TriggeredCalls[uniqueId] then
+    local pending = TriggeredCalls[uniqueId]
+    if not pending then
         return error("ERROR: No callback with this id found! callback name: " .. name, 1)
     end
 
-    if not isSync then
-        TriggeredCalls[uniqueId](...)
-    else
-        TriggeredCalls[uniqueId]:resolve(...)
+    -- Only the player the request was sent to may answer it.
+    if _source ~= pending.src then
+        return error("ERROR: Callback response source mismatch! callback name: " .. name, 1)
+    end
+
+    if isSync then
+        if pending.promise then
+            pending.promise:resolve(...)
+        end
+    elseif pending.callback then
+        pending.callback(...)
     end
     TriggeredCalls[uniqueId] = nil
 end
