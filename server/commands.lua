@@ -342,7 +342,7 @@ function BanPlayers(data)
     end
 
     local datetime = os.time() + banTime * 3600
-    TriggerEvent("vorpbans:addtodb", true, targetsteam, banTime)
+    TriggerEvent("vorpbans:addtodb", true, targetsteam, banTime == 0 and 0 or datetime)
 
     local text = banTime == 0 and Translation[Lang].Notify.banned or (Translation[Lang].Notify.banned2 .. os.date(Config.DateTimeFormat, datetime + Config.TimeZoneDifference * 3600) .. Config.TimeZone)
     sendDiscordLogs(data.config.webhook, data, data.source, text, "")
