@@ -23,10 +23,6 @@ if resourcename ~= 'vorp_core' then
     return print("^3WARNING ^0 This resource is not named correctly, please change it to ^1'vorp_core'^0.")
 end
 
-local steamwebapikey = GetConvar("steam_webApiKey", "") == ""
-if steamwebapikey then
-    return print("Steam Web API Key is not set, please set it in your server.cfg")
-end
 
 local oneSyncConvar = GetConvar('onesync', 'off')
 if oneSyncConvar == 'off' then
