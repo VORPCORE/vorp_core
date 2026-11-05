@@ -1,3 +1,9 @@
+<3.4>
+- restored the steam player names that cfx removed (you need the steam web api key in server.cfg for this)
+- fixed ban expire
+- fixed notification typo notifyAdvanced (you might need to update your scripts if you had the typo)
+- added to config to disable choking tackle shoving grapple jump to other horses or slow down
+- small fixes and updates
 <3.3>
 - added multi jobs system (see docs for more info)
 - new columns needed to be added to the database (see commits for more info or txAdmin MariaDB.sql file)
