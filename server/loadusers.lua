@@ -173,6 +173,7 @@ AddEventHandler("playerJoining", function()
         MySQL.insert("INSERT INTO users VALUES(?,?,?,?,?,?,?)", { identifier, defaultGroup, 0, 0, 0, Config.MaxCharacters, Config.MaxCharacterJobs })
         _users[identifier] = User(_source, identifier, defaultGroup, 0, license, Config.MaxCharacters, Config.MaxCharacterJobs)
     end
+    
 end)
 
 

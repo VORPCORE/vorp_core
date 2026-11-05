@@ -42,10 +42,10 @@ end
 AddEventHandler("playerConnecting", function(playerName, setKickReason, deferrals)
     local _source = source
     deferrals.defer()
+    Wait(0)
 
     local steamIdentifier = GetPlayerIdentifierByType(_source, 'steam')
 
-    Wait(1)
     if not steamIdentifier then
         deferrals.done(T.NoSteam)
         setKickReason(T.NoSteam)
@@ -78,6 +78,38 @@ AddEventHandler("playerConnecting", function(playerName, setKickReason, deferral
     if Config.SaveDiscordId then
         MySQL.update('UPDATE characters SET `discordid` = ? WHERE `identifier` = ? ', { GetDiscordID(_source), steamIdentifier })
     end
+
+
+    local key = GetConvar('steam_webApiKey', '')
+    if key == '' or key == 'none' then return print("if you want steam names added to server.cfg set steam_webApiKey") end
+
+    local steamId = string.format('%d', tonumber(steamIdentifier:sub(7), 16))
+    local url = ('https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=%s&steamids=%s'):format(key, steamId)
+    local finished = false
+
+    local function finish()
+        if finished then return end
+        finished = true
+        deferrals.done()
+    end
+
+    SetTimeout(10000, finish)
+
+    PerformHttpRequest(url, function(status, body)
+        if finished then return end
+
+        if status == 200 then
+            local ok, name = pcall(function()
+                return json.decode(body).response.players[1].personaname
+            end)
+
+            if ok and type(name) == 'string' then
+                SetPlayerName(_source, name)
+            end
+        end
+
+        finish()
+    end, 'GET')
 end)
 
 AddEventHandler('playerJoining', function()
